@@ -1,20 +1,31 @@
 import { registerSettings, moduleName } from './settings.js';
 import { getActorIdFromChatMessage } from './helpers/getActors.js'
 import { npcBackgroundGenerator, npcConversation } from './npcHandler.js';
+import { getGptReplyAsHtml } from './chat-gpt.js';
 
 Hooks.once('init', () => {
 	console.log(`${moduleName} | Initialization`);
 	registerSettings();
 
 	Actors.unregisterSheet("core", ActorSheet);
-	Actors.registerSheet("it-has-brain", ExtendedActorSheet, {makeDefault: false});
+	Actors.registerSheet("it-has-brain", ExtendedActorSheet, { makeDefault: false });
 
 });
 
 Hooks.on('chatMessage', async (chatLog, message, _chatData) => {
 	if (message.startsWith('?')) {
 		// you have some questions regarding the system
+		const output = message.replace(/\?/g, '');
+		const reply = await getGptReplyAsHtml(output);
 
+		const abbr = "Provided to you by the gods";
+		await ChatMessage.create({
+			user: game.user.id,
+			speaker: ChatMessage.getSpeaker({ alias: 'GPT' }),
+			content: `<abbr title="${abbr}" class="ask-chatgpt-to fa-solid fa-microchip-ai"></abbr>
+				<span class="ask-chatgpt-reply">${reply}</span>`,			
+			sound: CONFIG.sounds.notification,
+		});
 	}
 	if (message.startsWith('@')) {
 		// you tried to target a actor in the scene
