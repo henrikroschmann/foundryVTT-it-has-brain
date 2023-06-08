@@ -1,6 +1,4 @@
-.sheet-body .tab {
-    background-color: #444;
-    color: white;
+.sheet-body .tab {   
     padding: 10px;
     margin: 5px;
     border-radius: 5px;
@@ -9,13 +7,11 @@
   
   .sheet-body .tab-content {
     display: none;
-    padding: 10px;
-    background-color: #ccc;
+    padding: 10px;    
     border-radius: 5px;
   }
   
-  .sheet-body .tab.active {
-    background-color: #777;
+  .sheet-body .tab.active {    
   }
   
   .sheet-body .tab-content.active {
