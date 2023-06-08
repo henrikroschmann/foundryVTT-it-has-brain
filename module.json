@@ -2,7 +2,7 @@
   "id": "it-has-brain",
   "title": "It has brain",
   "description": "This is a simple test to give the NPC a brain.",
-  "version": "1.0.0",
+  "version": "#{VERSION}#",
   "compatibility": {
     "minimum": "10",
     "verified": "10.291"
@@ -15,7 +15,9 @@
   "esmodules": ["scripts/module.js"],  
   "styles": ["styles/module.css"],
   "packs": [],
-  "url": "https://github.com/henrikroschmann/foundryVTT-it-has-brain",
+  "url": "#{URL}#",
+  "manifest": "#{MANIFEST}#",
+  "download": "#{DOWNLOAD}#",  
   "license": "LICENSE",
   "readme": "README.md"
 }

@@ -1,0 +1,17 @@
+{
+    "name": "It has brain",
+    "version": "0.0.1",
+    "description": "This is a simple test to give the NPC a brain.",
+    "repository": "https://github.com/henrikroschmann/foundryVTT-it-has-brain",
+    "author": "Henrik Röschmann",
+    "license": "MIT",
+    "scripts": {
+      "lint": "eslint ."
+    },
+    "devDependencies": {
+      "eslint": "^8.0.1",
+      "eslint-plugin-import": "^2.25.2",
+      "eslint-plugin-n": "^15.0.0",
+      "eslint-plugin-promise": "^6.0.0"
+    }
+  }
