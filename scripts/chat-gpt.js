@@ -63,7 +63,6 @@ async function callGptApi(query) {
 }
 
 export async function getGptReplyAsHtml(query) {
-	console.log("hej hej hapå ", query)
 	const answer = await callGptApi(query);
 	const html = /<\/?[a-z][\s\S]*>/i.test(answer) || !answer.includes('\n') ?
 		answer : answer.replace(/\n/g, "<br>");

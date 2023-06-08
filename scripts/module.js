@@ -1,20 +1,31 @@
 import { registerSettings, moduleName } from './settings.js';
 import { getActorIdFromChatMessage } from './helpers/getActors.js'
-import { npcBackgroundGenerator, npcConversation } from './npcHandler.js';
+import { initiateNpcConversations, npcBackgroundGenerator, npcConversation } from './npcHandler.js';
+import { getGptReplyAsHtml } from './chat-gpt.js';
 
 Hooks.once('init', () => {
 	console.log(`${moduleName} | Initialization`);
 	registerSettings();
 
 	Actors.unregisterSheet("core", ActorSheet);
-	Actors.registerSheet("it-has-brain", ExtendedActorSheet, {makeDefault: false});
+	Actors.registerSheet("it-has-brain", ExtendedActorSheet, { makeDefault: false });
 
 });
 
 Hooks.on('chatMessage', async (chatLog, message, _chatData) => {
 	if (message.startsWith('?')) {
 		// you have some questions regarding the system
+		const output = message.replace(/\?/g, '');
+		const reply = await getGptReplyAsHtml(output);
 
+		const abbr = "Provided to you by the gods";
+		await ChatMessage.create({
+			user: game.user.id,
+			speaker: ChatMessage.getSpeaker({ alias: 'GPT' }),
+			content: `<abbr title="${abbr}" class="ask-chatgpt-to fa-solid fa-microchip-ai"></abbr>
+				<span class="ask-chatgpt-reply">${reply}</span>`,			
+			sound: CONFIG.sounds.notification,
+		});
 	}
 	if (message.startsWith('@')) {
 		// you tried to target a actor in the scene
@@ -38,7 +49,27 @@ Hooks.on('chatMessage', async (chatLog, message, _chatData) => {
 	}
 })
 
-Hooks.once('ready', function () {
+let npcConversationActive = false;
+
+Hooks.on('renderActorDirectory', (app, html, _data) => {
+	const button = $(`<button type="button" id="toggle-npc-conversation">Toggle NPC Conversations</button>`);
+	button.on('click', () => {
+		if (npcConversationActive) {
+			clearInterval(npcConversationActive);
+			npcConversationActive = false;
+			ui.notifications.info("NPC Conversation has been stopped");
+		} else {
+			npcConversationActive = setInterval(initiateNpcConversations, 600);
+			ui.notifications.info("NPC Conversation has started");
+		}
+	});
+	html.find('.directory-footer').append(button);
+});
+
+
+
+
+Hooks.once('ready', async function () {
 	game.socket.on("module.it-has-brain.generateBackground", async (data) => {
 		console.log("Received socket event for background generation:", data);
 
@@ -52,7 +83,6 @@ Hooks.once('ready', function () {
 
 		console.log("Socket event emitted for generated background.");
 	});
-
 });
 
 
